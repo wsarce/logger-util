@@ -4,14 +4,13 @@ with open('README.md') as f:
     readme = f.read()
 
 setup(name='logger_util',
-      version='0.1',
+      version='0.2',
       description='Dead simple Python logger. Redirects stdout to a file while maintaining console printing.',
       long_description=readme,
       long_description_content_type="text/markdown",
       classifiers=[
           'License :: OSI Approved :: MIT License',
-          'Programming Language :: Python :: 3.8',
-          'Topic :: Logging :: Data :: Debug'
+          'Programming Language :: Python :: 3.8'
       ],
       keywords='logger_util logging python wsarce',
       url='https://github.com/wsarce/logger-util',
