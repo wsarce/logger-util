@@ -37,7 +37,8 @@ class Log(object):
 
     def write(self, msg):
         self.log = open(self.log_name, "a")
-        self.orgstdout.write(msg)
+        if self.orgstdout:
+            self.orgstdout.write(msg)
         self.log.write(msg)
         self.log.close()
 
