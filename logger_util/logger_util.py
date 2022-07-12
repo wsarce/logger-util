@@ -1,6 +1,7 @@
 import datetime
 import sys
-from os import listdir, mkdir, path
+from os import listdir, mkdir, path, getpid
+import psutil
 import wmi
 
 
@@ -60,6 +61,28 @@ def log_startup():
     print(f"STARTUP: NumberOfProcessors - {my_system.NumberOfProcessors}")
     print(f"STARTUP: SystemType - {my_system.SystemType}")
     print(f"STARTUP: SystemFamily - {my_system.SystemFamily}")
+    svmem = psutil.virtual_memory()
+    print(f"STARTUP: Physical Memory Total - {get_size(svmem.total)}")
+    print(f"STARTUP: Physical Memory Available - {get_size(svmem.available)}")
+    print(f"STARTUP: Physical Memory Used - {get_size(svmem.used)}")
+    print(f"STARTUP: Physical Memory Percentage - {svmem.percent}%")
+    swap = psutil.swap_memory()
+    print(f"STARTUP: Swap Memory Total - {get_size(swap.total)}")
+    print(f"STARTUP: Swap Memory Free - {get_size(swap.free)}")
+    print(f"STARTUP: Swap Memory Used - {get_size(swap.used)}")
+    print(f"STARTUP: Swap Memory Percentage - {swap.percent}%")
+
+
+def get_process_memory():
+    print(f"INFO: {datetime.datetime.now().strftime('%c')}")
+    print(f"INFO: Process Memory - {psutil.Process().memory_info().rss / 1024 ** 2:.2f} MB")
+    print(f"INFO: RAM Usage - {psutil.virtual_memory()[2]}%")
+    svmem = psutil.virtual_memory()
+    print(f"INFO: Physical Memory Used - {get_size(svmem.used)}")
+    print(f"INFO: Physical Memory Percentage - {svmem.percent}%")
+    swap = psutil.swap_memory()
+    print(f"INFO: Swap Memory Used - {get_size(swap.used)}")
+    print(f"INFO: Swap Memory Percentage - {swap.percent}%")
 
 
 def parse_log(log_file):
@@ -85,3 +108,17 @@ def parse_log(log_file):
             else:
                 parsed_logs[3].append(line)
     return parsed_logs
+
+
+def get_size(byte_array, suffix="B"):
+    """
+    Scale bytes to its proper format
+    e.g:
+        1253656 => '1.20MB'
+        1253656678 => '1.17GB'
+    """
+    factor = 1024
+    for unit in ["", "K", "M", "G", "T", "P"]:
+        if byte_array < factor:
+            return f"{byte_array:.2f}{unit}{suffix}"
+        byte_array /= factor
